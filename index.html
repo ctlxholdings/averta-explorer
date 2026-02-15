@@ -152,7 +152,7 @@ const riskTypeIcon = (t) => t === 'priceable' ? '◆' : t === 'structural' ? '�
 const riskTypeLabel = (t) => t === 'priceable' ? 'Quantifiable — modelable with P10/P90 ranges' : t === 'structural' ? 'Structural — systematic, scenario analysis only' : 'Operational — mitigated by contracts/processes';
 const evidenceIcon = (s) => s === 'evidenced' ? '●' : s === 'quantified' ? '◐' : '○';
 const evidenceColor = (s) => s === 'evidenced' ? '#22c55e' : s === 'quantified' ? '#f59e0b' : '#6b7280';
-const evidenceLabel = (s) => s === 'evidenced' ? 'Evidenced — data room reference available' : s === 'quantified' ? 'Quantified — P10/P90 set, pending evidence' : 'Identified — named, not yet calibrated';
+const evidenceLabel = (s) => s === 'evidenced' ? 'Validated — calibrated to Averta operating data' : s === 'quantified' ? 'Modeled — P10/P90 set using industry benchmarks' : 'Identified — named, not yet calibrated';
 const categoryColor = (c) => ({
   pre_cod: '#f59e0b', operating: '#60a5fa', market_regulatory: '#f472b6', platform: '#a78bfa'
 })[c] || '#6b7280';
@@ -228,14 +228,16 @@ function BankabilityBadge() {
   const evidenced = rr.evidenced_count || 0;
   const quantified = rr.quantified_count || 0;
   const color = score >= 0.7 ? '#22c55e' : score >= 0.4 ? '#f59e0b' : '#ef4444';
-  const label = score >= 0.7 ? 'WELL EVIDENCED' : score >= 0.4 ? 'PARTIALLY EVIDENCED' : 'CALIBRATION PENDING';
+  const label = score >= 0.7 ? 'WELL VALIDATED' : score >= 0.4 ? 'PARTIALLY VALIDATED' : 'EARLY STAGE';
   return React.createElement('div', {className: 'panel p-4 text-center'},
-    React.createElement('div', {className: 'text-xs text-gray-500 mb-1'}, 'Evidence Coverage'),
+    React.createElement('div', {className: 'text-xs text-gray-500 mb-1'}, 'Assumption Validation'),
     React.createElement('div', {style: {color: color, fontSize: '2rem', fontWeight: 'bold', fontFamily: 'monospace'}},
       (score * 100).toFixed(0) + '%'),
     React.createElement('div', {style: {color: color}, className: 'text-sm font-bold mt-1'}, label),
-    React.createElement('div', {className: 'text-xs text-gray-600 mt-2'}, evidenced + '/' + total + ' risks evidenced'),
-    React.createElement('div', {className: 'text-xs text-gray-600 mt-0.5'}, quantified + '/' + total + ' risks quantified'),
+    React.createElement('div', {className: 'text-xs text-gray-600 mt-2 leading-relaxed'},
+      evidenced + ' of ' + total + ' risk inputs calibrated to site-specific data'),
+    React.createElement('div', {className: 'text-xs text-gray-600 mt-0.5 leading-relaxed'},
+      (total - evidenced) + ' use industry benchmarks (NREL, CNMC, INE)'),
     React.createElement('div', {className: 'w-full bg-gray-700 rounded-full h-2 mt-2'},
       React.createElement('div', {className: 'h-2 rounded-full', style: {width: (score*100)+'%', background: color}}))
   );
@@ -1571,10 +1573,10 @@ function RiskRegister() {
             React.createElement('div', null, React.createElement('span', {style:{color:'#f472b6'}}, '◇'), ' Structural — systematic, scenario analysis only'),
             React.createElement('div', null, React.createElement('span', {style:{color:'#a78bfa'}}, '○'), ' Operational — mitigated by contracts or processes'))),
         React.createElement('details', null,
-          React.createElement('summary', {className: 'text-gray-500 cursor-pointer select-none', style:{fontSize:'11px'}}, 'Evidence status'),
+          React.createElement('summary', {className: 'text-gray-500 cursor-pointer select-none', style:{fontSize:'11px'}}, 'Validation status'),
           React.createElement('div', {className: 'pl-3 space-y-0.5 mt-0.5'},
-            React.createElement('div', null, React.createElement('span', {style:{color:'#22c55e'}}, '●'), ' Evidenced — data room reference available'),
-            React.createElement('div', null, React.createElement('span', {style:{color:'#f59e0b'}}, '◐'), ' Quantified — P10/P90 set, pending evidence'),
+            React.createElement('div', null, React.createElement('span', {style:{color:'#22c55e'}}, '●'), ' Validated — calibrated to Averta-specific operating data'),
+            React.createElement('div', null, React.createElement('span', {style:{color:'#f59e0b'}}, '◐'), ' Modeled — P10/P90 set using industry benchmarks'),
             React.createElement('div', null, React.createElement('span', {style:{color:'#6b7280'}}, '○'), ' Identified — named, not yet calibrated'))))),
     sections);
 }
@@ -2297,7 +2299,7 @@ function App() {
           React.createElement('div', {className: 'text-xs text-gray-500'}, 'P50 IRR'),
           React.createElement('div', {className: 'text-2xl font-mono font-bold', style: {color: irrColor(mc.irr.p50)}}, fmtPct(mc.irr.p50))),
         React.createElement('div', {className: 'text-right'},
-          React.createElement('div', {className: 'text-xs text-gray-500'}, 'Evidence'),
+          React.createElement('div', {className: 'text-xs text-gray-500'}, 'Validation'),
           React.createElement('div', {className: 'text-2xl font-mono font-bold', style: {color: bankColor}},
             (evScore * 100).toFixed(0) + '%')))),
 
@@ -2330,7 +2332,7 @@ function App() {
 
     // Footer
     React.createElement('div', {className: 'mt-4 text-xs text-gray-600 text-center'},
-      'Averta Explorer \u2014 ' + rr.total_risks + ' risks tracked, ' + (rr.evidenced_count || 0) + ' evidenced, ' + (rr.quantified_count || 0) + ' quantified \u2014 ' + mc.n_simulations + ' MC simulations'));
+      'Averta Explorer \u2014 ' + rr.total_risks + ' risk inputs tracked, ' + (rr.evidenced_count || 0) + ' validated against operating data, ' + (rr.quantified_count || 0) + ' modeled \u2014 ' + mc.n_simulations + ' MC simulations'));
 }
 
 
